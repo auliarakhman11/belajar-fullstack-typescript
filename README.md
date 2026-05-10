@@ -4,15 +4,17 @@ Materi ini disusun untuk membangun aplikasi Point of Sale (POS) dengan arsitektu
 
 ## BAB 1: Fundamental & Arsitektur Sistem
 
-- 1.1. Konsep Pemisahan Monolith ke Micro-Frontend/API-Driven
-- 1.2. Anatomi JWT: Access Token, Refresh Token, dan Keamanan Stateless
-- 1.3. Setup Environment: PostgreSQL, Node.js, dan Repositori Git
+- [1.1. Konsep Pemisahan Monolith ke API-Driven](./01-Fundamental-dan-Arsitektur/1.1-Konsep-Arsitektur.md)
+- [1.2. Anatomi JWT: Access Token, Refresh Token, dan Keamanan Stateless](./01-Fundamental-dan-Arsitektur/1.2-Anatomi-JWT.md)
+- [1.3. Setup Environment: PostgreSQL, Node.js, dan Repositori Git](./01-Fundamental-dan-Arsitektur/1.3-Setup-Environment.md)
 
 ## BAB 2: Desain Database Relasional Multi-Outlet
 
-- 2.1. Teori Normalisasi Database untuk Skala Multi-Cabang
-- 2.2. Pemodelan Skema Prisma (User, Outlet, Role, Product, Transaction)
-- 2.3. Eksekusi Migrasi dan Prisma Studio
+- [2.1. Teori Normalisasi Database untuk Skala Multi-Cabang](./02-Desain-Database/2.1-Teori-Normalisasi.md)
+
+- [2.2. Pemodelan Skema Prisma (User, Outlet, Role, Product, Transaction)](./02-Desain-Database/2.2-Pemodelan-Skema-Prisma.md)
+
+* 2.3. Eksekusi Migrasi dan Prisma Studio
 
 ## BAB 3: Backend Foundation (Express.js & TypeScript)
 
