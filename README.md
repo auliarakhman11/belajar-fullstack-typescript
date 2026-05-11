@@ -1,65 +1,78 @@
-# Peta Jalan (Roadmap) Pembuatan POS Multi-Outlet Enterprise
+# 🚀 Dokumentasi Pembangunan POS Enterprise
+Sistem Point of Sale Multi-Cabang | Fullstack TypeScript | PostgreSQL
 
-Materi ini disusun untuk membangun aplikasi Point of Sale (POS) dengan arsitektur modern menggunakan Next.js, Express.js (TypeScript), PostgreSQL, dan pendekatan Offline-First.
+---
 
-## BAB 1: Fundamental & Arsitektur Sistem
+## 📚 Daftar Isi (E-Book)
 
-- [1.1. Konsep Pemisahan Monolith ke API-Driven](./01-Fundamental-dan-Arsitektur/1.1-Konsep-Arsitektur.md)
-- [1.2. Anatomi JWT: Access Token, Refresh Token, dan Keamanan Stateless](./01-Fundamental-dan-Arsitektur/1.2-Anatomi-JWT.md)
-- [1.3. Setup Environment: PostgreSQL, Node.js, dan Repositori Git](./01-Fundamental-dan-Arsitektur/1.3-Setup-Environment.md)
+### **Bagian 1: Fondasi & Persiapan**
+#### **Bab 1: Arsitektur & Spesifikasi Sistem**
+*   [1.1 Gambaran Umum Aplikasi POS & Admin](./docs/01-01-gambaran-umum.md)
+*   [1.2 Memahami Alur Kerja Multi-Cabang & Multi-Role](./docs/01-02-alur-kerja.md)
+*   [1.3 Analisis Tech Stack](./docs/01-03-tech-stack.md)
 
-## BAB 2: Desain Database Relasional Multi-Outlet
+#### **Bab 2: Mastering PostgreSQL dari Nol**
+*   [2.1 Instalasi PostgreSQL & Setup Environment](./docs/02-01-instalasi-db.md)
+*   [2.2 Berkenalan dengan DBeaver (GUI Database)](./docs/02-02-setup-dbeaver.md)
+*   [2.3 Dasar-Dasar SQL (Create, Table, Querying)](./docs/02-03-dasar-sql.md)
+*   [2.4 Perancangan Database (ERD)](./docs/02-04-perancangan-erd.md)
 
-- [2.1. Teori Normalisasi Database untuk Skala Multi-Cabang](./02-Desain-Database/2.1-Teori-Normalisasi.md)
+---
 
-- [2.2. Pemodelan Skema Prisma (User, Outlet, Role, Product, Transaction)](./02-Desain-Database/2.2-Pemodelan-Skema-Prisma.md)
+### **Bagian 2: Backend Development (Express.js & TypeScript)**
+#### **Bab 3: Inisiasi Proyek Backend**
+*   [3.1 Setup Project Express.js & TypeScript](./docs/03-01-setup-express-ts.md)
+*   [3.2 Struktur Folder Berbasis Domain](./docs/03-02-struktur-folder.md)
+*   [3.3 Manajemen Environment Variable (.env)](./docs/03-03-env-management.md)
 
-* 2.3. Eksekusi Migrasi dan Prisma Studio
+#### **Bab 4: Data Modeling dengan Prisma ORM**
+*   [4.1 Instalasi & Inisialisasi Prisma](./docs/04-01-install-prisma.md)
+*   [4.2 Menulis Schema Prisma untuk POS](./docs/04-02-prisma-schema.md)
+*   [4.3 Database Migration (Deploy Schema)](./docs/04-03-migration.md)
+*   [4.4 Seeding Data Dummy](./docs/04-04-seeding.md)
 
-## BAB 3: Backend Foundation (Express.js & TypeScript)
+#### **Bab 5: Keamanan & Autentikasi JWT**
+*   [5.1 Implementasi Register & Login](./docs/05-01-register-login.md)
+*   [5.2 Mekanisme Access & Refresh Token](./docs/05-02-jwt-mechanism.md)
+*   [5.3 Middleware Role-Based Access Control (RBAC)](./docs/05-03-rbac-middleware.md)
 
-- 3.1. Setup Express.js dengan TypeScript Compiler
-- 3.2. Implementasi Clean Architecture (Routes, Controllers, Services)
-- 3.3. Pembuatan Middleware Global (Error Handling & JWT Validation)
+#### **Bab 6: API Core: Manajemen Master Data**
+*   [6.1 CRUD Cabang, Kategori, dan Produk](./docs/06-01-crud-master.md)
+*   [6.2 Manajemen User & Hak Akses Cabang](./docs/06-02-user-management.md)
+*   [6.3 Implementasi Upload Gambar](./docs/06-03-upload-image.md)
 
-## BAB 4: Modul Authentication & Authorization
+#### **Bab 7: API Core: Inventory & Transaksi**
+*   [7.1 Logika Mutasi Stok (Stock In/Out)](./docs/07-01-inventory-logic.md)
+*   [7.2 Engine Transaksi & Kalkulasi Harga](./docs/07-02-transaction-engine.md)
+*   [7.3 Integrasi Fonnte WA Gateway](./docs/07-03-fonnte-integration.md)
+*   [7.4 Testing API dengan Postman/Thunder Client](./docs/07-04-api-testing.md)
 
-- 4.1. Pembuatan Endpoint Login & Register
-- 4.2. Logika Rotasi Token (Refresh Token) di HTTP-Only Cookies
-- 4.3. Implementasi Role-Based Access Control (RBAC) untuk Super User & Admin
+---
 
-## BAB 5: Frontend Foundation (Next.js)
+### **Bagian 3: Frontend Development (Next.js & Tailwind)**
+#### **Bab 8: Inisiasi Proyek Frontend**
+*   [8.1 Instalasi Next.js & Tailwind CSS](./docs/08-01-setup-nextjs.md)
+*   [8.2 Konfigurasi Axios & Interceptors](./docs/08-02-axios-config.md)
+*   [8.3 Setup State Management dengan Zustand](./docs/08-03-zustand-setup.md)
 
-- 5.1. Struktur Folder Next.js (App Router), `components/`, dan `features/`
-- 5.2. Setup Tailwind CSS, shadcn/ui, dan Tema Global
-- 5.3. Konfigurasi Axios Interceptor untuk Auto-Refresh JWT
+#### **Bab 9: Membangun UI Admin Dashboard**
+*   [9.1 Layout Sidebar & Navbar Responsif](./docs/09-01-admin-layout.md)
+*   [9.2 Reusable Components (UI Library)](./docs/09-02-reusable-components.md)
+*   [9.3 Visualisasi Data dengan Chart.js](./docs/09-03-data-visualization.md)
 
-## BAB 6: Modul Dashboard Admin (Online)
+#### **Bab 10: Membangun Smart POS Client**
+*   [10.1 UI/UX Kasir: Search & Grid View](./docs/10-01-pos-ui.md)
+*   [10.2 Manajemen Keranjang Belanja (Cart Logic)](./docs/10-02-cart-logic.md)
+*   [10.3 Fitur Offline-First dengan IndexedDB](./docs/10-03-offline-mode.md)
+*   [10.4 Sinkronisasi Otomatis ke Backend](./docs/10-04-sync-logic.md)
 
-- 6.1. Layouting Multi-Role (Sidebar, Header Dinamis)
-- 6.2. Manajemen Master Data (Produk, User, Outlet, Kasir) dengan React Hook Form
-- 6.3. Visualisasi Data Penjualan (Grafik & Report)
+#### **Bab 11: Hardware & Integrasi Akhir**
+*   [11.1 Cetak Struk via Bluetooth Printer](./docs/11-01-bluetooth-print.md)
+*   [11.2 Fitur Kamera (Selfie & Outlet)](./docs/11-02-camera-api.md)
+*   [11.3 Final Review & Performance Audit](./docs/11-03-final-review.md)
 
-## BAB 7: Modul POS & Transaksi Kasir (Inti Sistem)
+---
 
-- 7.1. UI/UX Kasir: State Management Buka/Tutup Shift
-- 7.2. Implementasi Shopping Cart dengan Zustand
-- 7.3. Optimasi UI: Lazy Loading Gambar Produk menggunakan Next/Image
-
-## BAB 8: Sinkronisasi Offline-First
-
-- 8.1. Teori Service Worker dan Konsep Offline Web App
-- 8.2. Menyimpan Transaksi ke IndexedDB saat Offline
-- 8.3. Membuat Queue System untuk Auto-Sync ke Backend saat Online
-
-## BAB 9: Integrasi Eksternal (Hardware & API)
-
-- 9.1. Koneksi Web Bluetooth API untuk Thermal Printer (ESC/POS Commands)
-- 9.2. Format Struk dan Logika Print Klien
-- 9.3. Integrasi WhatsApp URL Scheme / API untuk Kirim Link Invoice
-
-## BAB 10: Finalisasi & Deployment
-
-- 10.1. Audit Performa dan Security
-- 10.2. Deployment Backend & Database ke VPS
-- 10.3. Deployment Frontend ke Vercel/VPS
+### **Bagian 4: Penutup**
+*   [12.1 Tips Deployment (VPS/Vercel)](./docs/12-01-deployment.md)
+*   [12.2 Langkah Pengembangan Selanjutnya](./docs/12-02-future-plan.md)
