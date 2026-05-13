@@ -1,18 +1,18 @@
-Luar biasa semangatnya! Sekarang kita masuk ke bagian yang akan membuat Anda merasa seperti memiliki "kekuatan super" dalam mengelola database.
+Ah, baik! Anda benar, agar format dokumentasi di folder `docs/` Anda tetap rapi, konsisten, dan berurutan, lebih baik kita buatkan ulang materi Markdown khusus untuk **4.1** secara utuh. Terkadang me-*rename* file lama bisa membingungkan alur baca nantinya.
 
-Selamat datang di **Bab 4: Integrasi Database dengan Prisma ORM**. Di sini, kita akan mengubah coretan ERD yang sudah kita diskusikan panjang lebar menjadi tabel-tabel nyata di PostgreSQL hanya dengan beberapa baris kode.
-
-Silakan buat file **`docs/04-01-inisialisasi-prisma.md`** dan masukkan panduan berikut:
+Silakan buat (atau *overwrite* jika sudah ada) file **`docs/04-01-inisialisasi-prisma.md`** dan masukkan materi berikut:
 
 ---
 
-## 4.1 Inisialisasi Prisma & Koneksi Database
+# 4.1 Instalasi & Inisialisasi Prisma ORM
 
-**Prisma** adalah ORM (_Object-Relational Mapping_) generasi terbaru yang akan memetakan tabel database menjadi objek TypeScript. Artinya, Anda tidak perlu lagi menulis query SQL manual yang panjang dan rawan salah ketik di dalam kode Express Anda.
+Dalam proyek ini, kita tidak akan menulis query SQL secara manual (seperti `SELECT * FROM users`). Kita akan menggunakan **Prisma**, sebuah ORM (*Object-Relational Mapping*) modern generasi terbaru untuk Node.js dan TypeScript. 
 
-### 1. Inisialisasi Prisma dalam Proyek
+Prisma bertindak sebagai "penerjemah" cerdas antara kode TypeScript kita dan database PostgreSQL, sekaligus memberikan *auto-complete* yang sangat kuat sehingga meminimalisir kesalahan pengetikan (*typo*).
 
-Jalankan perintah berikut di terminal Anda:
+## 1. Inisialisasi Prisma
+
+Karena kita sudah menginstal library Prisma di Bab 3.1, langkah pertama adalah menginisialisasi konfigurasi dasarnya. Buka terminal dan jalankan:
 
 ```bash
 npx prisma init
@@ -21,12 +21,14 @@ npx prisma init
 
 Perintah ini akan secara otomatis melakukan dua hal:
 
-1. Membuat folder baru bernama `prisma/` yang berisi file `schema.prisma`.
-2. Memastikan file `.env` Anda sudah memiliki variabel `DATABASE_URL` (yang sudah kita buat di Bab 3.3).
+1. Membuat folder `prisma/` di root direktori proyek Anda.
+2. Membuat file `schema.prisma` di dalam folder tersebut.
 
-### 2. Mengonfigurasi `schema.prisma`
+## 2. Membersihkan `schema.prisma` (Standar Prisma 7+)
 
-Buka file **`prisma/schema.prisma`**. File ini adalah "kitab suci" bagi database kita. Pastikan bagian `datasource` mengarah ke PostgreSQL:
+Pada Prisma versi terbaru (v7 ke atas), ada aturan keamanan baru: **URL koneksi database tidak boleh lagi ditulis langsung di dalam file skema**.
+
+Buka file **`prisma/schema.prisma`** dan ubah isinya menjadi persis seperti ini (pastikan baris `url` dihapus):
 
 ```prisma
 generator client {
@@ -35,95 +37,70 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // Baris 'url' sengaja dihilangkan sesuai standar keamanan Prisma v7+
 }
 
 ```
 
-### 3. Mengapa Menggunakan Prisma untuk POS Enterprise?
+## 3. Membuat File Konfigurasi Khusus (`prisma.config.ts`)
 
-- **Type-Safety Otomatis**: Jika Anda mengganti nama kolom di database, Prisma akan langsung memberi tahu bagian kode mana yang _error_. Ini sangat membantu untuk proyek besar seperti Tugas Akhir Anda.
-- **Prisma Studio**: GUI bawaan yang sangat ringan untuk mengintip data tanpa harus membuka DBeaver.
-- **Migrasi Terkontrol**: Setiap perubahan struktur database dicatat dalam folder `migrations`, sehingga Anda punya riwayat perubahan database yang rapi.
+Sebagai ganti baris `url` yang dihapus tadi, Prisma terbaru membutuhkan file konfigurasi di luar skema.
 
----
+Buat file baru bernama **`prisma.config.ts`** di folder paling luar (sejajar dengan `package.json`), dan isi dengan:
 
-### Menyiapkan Koneksi Global
+```typescript
+import { defineConfig } from "@prisma/config";
+import "dotenv/config";
 
-Agar kita tidak berulang kali membuka-tutup koneksi ke database, kita akan membuat satu _instance_ Prisma yang bisa dipakai di mana saja.
+export default defineConfig({
+  schema: "./prisma/schema.prisma",
+  datasource: {
+    // Memanggil URL database dari file .env dengan aman
+    url: process.env.DATABASE_URL as string,
+  },
+});
 
-Buat file baru **`src/config/database.config.ts`**:
+```
+
+## 4. Membuat *Instance* Global (`database.config.ts`)
+
+Agar aplikasi tidak membuka koneksi database baru setiap kali ada *request* masuk (yang bisa membuat server *crash*), kita perlu membuat satu jembatan koneksi tunggal yang akan digunakan secara global.
+
+Buat file baru di **`src/config/database.config.ts`**:
 
 ```typescript
 import { PrismaClient } from "@prisma/client";
+import { ENV } from "./env.config";
 
-// Membuat instance Prisma Client
-const prisma = new PrismaClient();
+/**
+ * Instance Prisma Client global.
+ * Menggunakan URL database yang divalidasi secara ketat dari ENV.
+ */
+const prisma = new PrismaClient({
+  datasourceUrl: ENV.DATABASE_URL,
+});
 
 export default prisma;
+
 ```
 
----
+## 5. Menyiapkan Prisma Client
 
-### Apa Selanjutnya?
-
-Langkah inisialisasi ini seperti menyambungkan kabel antara aplikasi dan mesin database. Kabelnya sudah terpasang, tapi "wadah" datanya masih kosong.
-
-Di **Sub-bab 4.2**, kita akan melakukan hal yang paling krusial: **Menulis Skema Database Lengkap**. Kita akan menyalin logika ERD (seperti Tabel Shift, Foto Selfie, dan Multi-Cabang) ke dalam bahasa Prisma.
-
-**Sudahkah folder `prisma` muncul di proyek Anda setelah menjalankan `npx prisma init`?** Jika sudah, siapkan kopi, karena kita akan menulis skema database yang cukup panjang namun sangat memuaskan!
-
-Tenang, jangan panik. Error pada file **`src/config/database.config.ts`** seperti yang terlihat pada gambar **image_7fcf7f.png** adalah hal yang sangat wajar saat pertama kali setup Prisma.
-
-Garis merah di bawah `@prisma/client` itu terjadi karena TypeScript mencari "isi" dari library tersebut, tapi **Prisma Client belum di-generate** (dibuat) berdasarkan skema Anda. Ibaratnya, Anda sudah membeli bajunya, tapi bajunya belum dijahit sesuai ukuran badan.
-
----
-
-### Solusi Cepat: Generate Prisma Client
-
-Silakan buka terminal di VS Code Anda dan jalankan perintah berikut:
+Langkah terakhir setelah konfigurasi selesai adalah "membangunkan" Prisma agar membuatkan tipe data untuk TypeScript. Jalankan perintah ini di terminal:
 
 ```bash
 npx prisma generate
 
 ```
 
-### Mengapa ini terjadi?
-
-Berbeda dengan library biasa, `@prisma/client` bersifat dinamis. Dia akan membangun dirinya sendiri berdasarkan tabel-tabel yang kita tulis di file `schema.prisma`. Karena saat ini file skema kita masih "kosong" (baru inisialisasi), TypeScript belum bisa mengenali strukturnya.
-
----
-
-### Jika Masih Error Setelah Generate:
-
-Jika setelah menjalankan perintah di atas garis merah masih ada, coba lakukan langkah **"P3K"** (Pertolongan Pertama Pada Kode) berikut:
-
-1. **Isi Skema Minimal:** Prisma kadang butuh minimal satu tabel agar bisa men-generate client dengan sempurna. Coba tambahkan "tabel percobaan" ini di dalam file **`prisma/schema.prisma`**:
-
-```prisma
-model User {
-  id    String @id @default(uuid())
-  name  String
-}
+Jika berhasil, Anda akan melihat pesan berwarna hijau di terminal. Mulai saat ini, setiap kali kita memanggil `prisma.` di dalam kode, VS Code akan langsung tahu tabel apa saja yang kita miliki!
 
 ```
 
-Lalu jalankan lagi `npx prisma generate`. 2. **Restart TypeScript Server:** Kadang VS Code "telat mikir".
-
-- Tekan `Ctrl + Shift + P` (Windows) atau `Cmd + Shift + P` (Mac).
-- Ketik **"Restart TS Server"** dan tekan Enter.
-
-3. **Cek Instalasi:** Pastikan library client sudah terpasang dengan perintah:
-
-````bash
-    npm install @prisma/client
-    ```
-
 ---
 
-### Tips Pro:
-Nantinya, setiap kali Anda mengubah struktur tabel di `schema.prisma`, Anda **wajib** menjalankan `npx prisma generate` agar folder `node_modules` Anda diperbarui dan TypeScript bisa memberikan *auto-complete* yang akurat.
+Sekarang materi **Bab 4.1** Anda sudah terdokumentasi dengan sangat rapi dan mengikuti standar teknologi paling baru. 
 
-**Sudah hilang garis merahnya?** Jika sudah, kita bisa lanjut ke bagian yang paling seru: **Sub-bab 4.2**, di mana kita akan memasukkan seluruh rancangan ERD hebat kita ke dalam `schema.prisma`!
+Jika Anda sudah menyimpan file ini, kita bisa lanjut memindahkan materi skema tabel (yang sudah saya kirim sebelumnya) ke dalam file **`docs/04-02-prisma-schema.md`** agar urutannya sempurna. Apakah ada yang ingin ditanyakan dari langkah 4.1 ini?
 
-````
+```

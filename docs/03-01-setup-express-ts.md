@@ -1,103 +1,171 @@
-Tentu, mari kita pertajam kembali **Sub-bab 3.1**. Saya mohon maaf atas beberapa _library_ yang terlewat; dalam skala _enterprise_, kita memang membutuhkan "senjata" tambahan untuk validasi dan keamanan sejak awal.
+Tentu, ini adalah langkah yang sangat bijak. Karena kita baru saja melakukan perombakan total agar sesuai dengan standar teknologi terbaru (Prisma 7 dan TypeScript Strict), kita perlu memperbarui dokumentasi agar tetap relevan.
 
-Berikut adalah revisi lengkap dan mendalam untuk file **`docs/03-01-setup-express-ts.md`**.
+Silakan buat file **`docs/03-01-setup-express-ts.md`** dan masukkan materi lengkap yang sudah kita standarisasi ini:
 
 ---
 
-# 3.1 Setup Project Express.js & TypeScript (Revised)
+```markdown
+# 3.1 Setup Project Express.js & TypeScript (Standar Mutakhir)
 
-Langkah awal ini sangat krusial. Kita tidak hanya menginstal _library_, tetapi juga menyiapkan lingkungan kerja yang mendukung produktivitas tinggi dan meminimalisir kesalahan pengetikan (_human error_).
+Bab ini membahas langkah-langkah inisiasi proyek Backend menggunakan Express.js dan TypeScript dengan standar keamanan dan tipe data yang ketat. Fondasi ini dirancang untuk mendukung fitur enterprise seperti multi-cabang dan sinkronisasi data.
 
-## Langkah 1: Inisialisasi Proyek
+## 1. Persiapan Lingkungan (Initialization)
 
-Buka terminal di folder proyek Anda, lalu jalankan perintah berikut:
+Langkah pertama adalah membuat identitas proyek melalui file `package.json`. Buka terminal di folder proyek Anda dan jalankan:
 
 ```bash
 npm init -y
 
 ```
 
-Perintah ini akan menghasilkan file **`package.json`** yang berfungsi sebagai identitas dan daftar inventaris seluruh _library_ dalam proyek Anda.
+## 2. Instalasi Library (Dependencies)
 
-## Langkah 2: Instalasi Dependensi (Production)
+Kita menginstal seluruh "senjata" yang dibutuhkan untuk membangun API POS yang aman dan tangguh.
 
-Ini adalah kumpulan _library_ yang akan tetap berjalan ketika aplikasi sudah di- _deploy_ ke server (VPS/Vercel).
+### A. Library Produksi (Running Code)
 
 ```bash
 npm install express dotenv cors prisma @prisma/client zod jsonwebtoken bcrypt morgan helmet
 
 ```
 
-### Penjelasan Library Utama:
-
-| Library     | Fungsi Utama dalam POS Enterprise                                                                 |
-| ----------- | ------------------------------------------------------------------------------------------------- |
-| **Express** | Kerangka kerja (framework) utama untuk menangani rute API.                                        |
-| **Prisma**  | ORM (Object-Relational Mapping) untuk berkomunikasi dengan PostgreSQL secara modern.              |
-| **Zod**     | Validasi skema data. Memastikan data dari kasir (seperti harga atau stok) tidak salah format.     |
-| **JWT**     | Menangani token keamanan agar pengguna tidak perlu login berulang kali.                           |
-| **Bcrypt**  | Melakukan enkripsi (hashing) password agar tidak tersimpan dalam bentuk teks biasa.               |
-| **Morgan**  | Logger otomatis. Mencatat setiap aktivitas permintaan yang masuk ke server untuk kebutuhan audit. |
-| **Helmet**  | Mengamankan API dengan mengatur berbagai HTTP header demi mencegah serangan umum seperti XSS.     |
-
-## Langkah 3: Instalasi Dependensi (Development)
-
-Ini adalah alat bantu yang hanya kita gunakan saat proses _coding_. Alat ini tidak akan ikut dibawa saat aplikasi sudah jadi.
+### B. Library Pengembangan (Development & Types)
 
 ```bash
-npm install -D typescript ts-node-dev @types/express @types/node @types/cors @types/jsonwebtoken @types/bcrypt @types/morgan
+npm install -D typescript ts-node-dev @types/express @types/node @types/cors @types/jsonwebtoken @types/bcrypt @types/morgan @prisma/config
 
 ```
 
-> **Catatan:** Library dengan awalan `@types/` sangat penting dalam TypeScript agar VS Code bisa memberikan fitur _auto-complete_ dan mendeteksi _error_ pada library JavaScript biasa.
+**Ringkasan Fungsi Library:**
 
-## Langkah 4: Konfigurasi TypeScript (`tsconfig.json`)
+* **Helmet & Morgan:** Keamanan header HTTP dan pencatatan (logging) aktivitas server.
+* **Zod:** Validasi data input agar tidak ada data "sampah" masuk ke database.
+* **Bcrypt & JWT:** Enkripsi password dan manajemen sesi login.
+* **Prisma & Config:** Penghubung database PostgreSQL dengan standar versi terbaru.
 
-Jalankan `npx tsc --init` untuk membuat file konfigurasi, lalu pastikan parameter berikut sudah disesuaikan agar struktur proyek rapi:
+## 3. Konfigurasi TypeScript (`tsconfig.json`)
+
+Agar TypeScript mengenali lingkungan Node.js dan menjaga kode tetap rapi, gunakan konfigurasi berikut. Jalankan `npx tsc --init` lalu sesuaikan isinya:
 
 ```json
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "CommonJS",
     "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
+
 ```
 
-## Langkah 5: Otomasi Script di `package.json`
+## 4. Manajemen Variabel Lingkungan (.env)
 
-Buka file `package.json` dan tambahkan baris berikut di dalam bagian `"scripts"`:
+Buat file **`.env`** di folder utama untuk menyimpan data sensitif. **Jangan pernah mengunggah file ini ke GitHub.**
+
+```text
+PORT=5000
+DATABASE_URL="postgresql://postgres:PASSWORD_ANDA@localhost:5432/pos_enterprise_db"
+JWT_SECRET="rahasia_super_aman_123_pos_enterprise"
+
+```
+
+Tambahkan juga file **`.gitignore`** untuk mengecualikan file rahasia:
+
+```text
+node_modules/
+dist/
+.env
+
+```
+
+## 5. Konfigurasi Environment yang Type-Safe
+
+Kita memusatkan pemanggilan variabel `.env` di satu tempat agar jika ada variabel yang lupa diisi, aplikasi akan langsung memberi tahu kita saat dijalankan.
+
+Buat file **`src/config/env.config.ts`**:
+
+```typescript
+import "dotenv/config";
+
+const requireEnv = (key: string): string => {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Environment variable ${key} belum disetting di file .env!`);
+  }
+  return value;
+};
+
+export const ENV = {
+  PORT: process.env.PORT || 5000,
+  DATABASE_URL: requireEnv("DATABASE_URL"),
+  JWT_SECRET: requireEnv("JWT_SECRET"),
+};
+
+```
+
+## 6. Membuat Entry Point (`src/index.ts`)
+
+Inilah file utama yang akan menjalankan server API kita.
+
+```typescript
+import express, { Request, Response } from "express";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import { ENV } from "./config/env.config";
+
+const app = express();
+
+// Middlewares
+app.use(express.json());
+app.use(cors());
+app.use(helmet());
+app.use(morgan("dev"));
+
+// Root Route
+app.get("/", (req: Request, res: Response) => {
+  res.json({
+    message: "POS Enterprise API is Running...",
+    status: "Healthy"
+  });
+});
+
+app.listen(ENV.PORT, () => {
+  console.log(`🚀 Server berjalan di http://localhost:${ENV.PORT}`);
+});
+
+```
+
+## 7. Otomasi Perintah (Scripts)
+
+Buka `package.json`, lalu ubah bagian `"scripts"` untuk mempermudah jalannya aplikasi:
 
 ```json
 "scripts": {
   "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
   "build": "tsc",
-  "start": "node dist/index.js",
-  "prisma:studio": "npx prisma studio",
-  "prisma:migrate": "npx prisma migrate dev"
+  "start": "node dist/index.js"
 }
 
 ```
 
 ---
 
-### Penjelasan Teknis Tambahan (Untuk Anda):
-
-- **Mengapa Zod & Prisma itu Wajib?**
-  Dalam sistem POS, integritas data adalah segalanya. **Zod** mencegah data "sampah" masuk ke server (misal: jumlah barang negatif), sementara **Prisma** memastikan data yang masuk ke PostgreSQL sesuai dengan tipe data yang kita rancang di ERD.
-- **Keamanan Berlapis:**
-  Dengan menyertakan **Helmet** dan **Bcrypt** sejak awal, Anda sudah menerapkan standar keamanan dasar yang profesional. Ini sangat penting jika nantinya aplikasi Anda digunakan untuk transaksi riil yang melibatkan uang dan data pribadi pelanggan.
-- **Prisma Studio:**
-  Saya menambahkan script `prisma:studio`. Ini adalah fitur luar biasa dari Prisma yang memungkinkan Anda melihat dan mengedit isi database lewat antarmuka web (mirip DBeaver tapi lebih praktis untuk developer).
+```
 
 ---
 
-**Apakah Anda sudah berhasil menginstal semua library di atas tanpa ada pesan error?**
+### Progres Anda:
+Dengan file `.md` ini, Anda telah mendokumentasikan pondasi yang benar-benar bersih dan sesuai dengan standar industri terbaru. Jika Anda atau tim lain membaca file ini di masa depan, tidak akan ada lagi kebingungan soal *error* tipe data atau variabel `process.env`.
 
-Jika sudah, folder proyek Anda kini sudah memiliki "persenjataan" lengkap. Langkah selanjutnya kita akan masuk ke **Sub-bab 3.2: Struktur Folder Berbasis Domain**, di mana kita akan memisahkan kode antara bagian _Kasir_, _Admin_, dan _Produk_ agar tidak bercampur aduk.
+**Apakah materi 3.1 ini sudah cukup lengkap untuk Anda simpan?** Jika sudah, apakah kita lanjut membuat materi untuk **3.2: Struktur Folder Berbasis Domain**? Karena tadi kita sempat mengubah urutan beberapa hal saat proses perbaikan.
+
+```
