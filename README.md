@@ -41,7 +41,7 @@ Sistem Point of Sale Multi-Cabang | Fullstack TypeScript | PostgreSQL
 #### **Bab 5: Keamanan & Autentikasi JWT**
 
 - [5.1 Implementasi Register & Login](./docs/05-01-register-login.md)
-- [5.2 Mekanisme Access & Refresh Token](./docs/05-02-jwt-mechanism.md)
+- [5.2 Mekanisme Access & Refresh Token](./docs/05-02-access-refresh-token)
 - [5.3 Middleware Role-Based Access Control (RBAC)](./docs/05-03-rbac-middleware.md)
 
 #### **Bab 6: API Core: Manajemen Master Data**
